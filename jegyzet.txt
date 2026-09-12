@@ -1,0 +1,64 @@
+    INSERT INTO attachments (
+    ticket_id, 
+    uploaded_by, 
+    original_filename, 
+    stored_filename, 
+    file_path, 
+    file_size_bytes, 
+    mime_type
+) VALUES (
+    1,                                             -- Ticket ID
+    4,                                             -- Uploaded by User ID
+    'error_log_server_01.txt',                     -- Original filename for UI display
+    'a1b2c3d4-8f9e-4a1b-bc2d-3e4f5a6b7c8d.txt',    -- Unique generated disk filename
+    '/uploads/2026/09/a1b2c3d4-8f9e-4a1b.txt',     -- File path or S3 key
+    15420,                                         -- Size in bytes
+    'text/plain'                                   -- MIME type
+);
+
+nodejs multer
+
+const express = require('express');
+const multer  = require('multer');
+const crypto = require('crypto');
+const path = require('path');
+
+const app = express();
+
+// Configure storage destination & unique filename generator
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');
+  },
+  filename: (req, file, cb) => {
+    const uniqueName = crypto.randomUUID() + path.extname(file.originalname);
+    cb(null, uniqueName);
+  }
+});
+
+const upload = multer({ storage: storage });
+
+app.post('/tickets/:id/attachments', upload.single('attachment'), async (req, res) => {
+  const ticketId = req.params.id;
+  const userId = req.user.id; // From auth session/jwt
+  const file = req.file;
+
+  // Insert into MariaDB database
+  const query = `
+    INSERT INTO attachments 
+    (ticket_id, uploaded_by, original_filename, stored_filename, file_path, file_size_bytes, mime_type)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `;
+  
+  await db.query(query, [
+    ticketId, 
+    userId, 
+    file.originalname, 
+    file.filename, 
+    file.path, 
+    file.size, 
+    file.mimetype
+  ]);
+
+  res.json({ message: 'File uploaded successfully!' });
+});

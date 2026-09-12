@@ -1,0 +1,22 @@
+{
+  "name": "ticket-mariadb-backend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "db:setup": "node src/setup.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^17.4.2",
+    "express": "^4.21.2",
+    "mariadb": "^3.4.0",
+    "multer": "^2.0.1",
+    "nodemailer": "^10.0.9"
+  }
+}
