@@ -65,3 +65,24 @@ app.post('/tickets/:id/attachments', upload.single('attachment'), async (req, re
 
 
 closed ticket delete from dashboard
+
+
+auto assign
+DELIMITER //
+
+CREATE TRIGGER assign_ticket_by_type
+BEFORE INSERT ON tickets
+FOR EACH ROW
+BEGIN
+    -- Finds a staff member matching the ticket type and assigns their ID
+    SET NEW.assigned_staff_id = (
+        SELECT staff_id 
+        FROM staff 
+        WHERE specialization = NEW.ticket_type 
+        ORDER BY RAND() 
+        LIMIT 1
+    );
+END;
+//
+
+DELIMITER ;
