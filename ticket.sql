@@ -19,7 +19,7 @@ CREATE TABLE tickets (
     description VARCHAR(250) NOT NULL,
     status ENUM('open', 'in_progress', 'closed') NOT NULL DEFAULT 'open',
     priority ENUM('low', 'moderate', 'high', 'critical') NOT NULL DEFAULT 'low',
-    type ENUM('servers', 'computers') NOT NULL,
+    type ENUM('software', 'hardware', 'thermal') DEFAULT 'software' NOT NULL,
     uploaded_by INT NOT NULL,
     assignee_id INT NULL, -- NULLable in case ticket is not assigned yet
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -94,9 +94,9 @@ INSERT INTO users (name, username, hash, birth_date, role, email) VALUES
 ('Emma Watson', 'ewatson', '$2b$12$uTr/uflYf2MSjnEX0zBaZO7tn5Wk3DdD38r745YRxlJ7iF3l5Ytja', '2001-06-30', 'user', 'emma.watson@company.com');
 
 INSERT INTO tickets (name, description, status, priority, type, uploaded_by, assignee_id) VALUES
-('Database Replica Failure', 'Secondary MariaDB replica node is failing health checks due to disk space exhaustion.', 'open', 'critical', 'servers', 4, 2),
+('Database Replica Failure', 'Secondary MariaDB replica node is failing health checks due to disk space exhaustion.', 'open', 'critical', 'software', 4, 2),
 ('Monitors Not Displaying', 'Dual monitor setup on Desk 14 is not receiving signal after office floor renovation.', 'in_progress', 'moderate', 'computers', 5, 3),
-('Kernel Panic on Web-02', 'Web application server crashed with kernel panic after latest patch update.', 'open', 'high', 'servers', 4, 2),
+('Kernel Panic on Web-02', 'Web application server crashed with kernel panic after latest patch update.', 'open', 'high', 'software', 4, 2),
 ('Laptop Keyboard Sticking', 'Spacebar and Enter keys are sticking on workstation laptop.', 'closed', 'low', 'computers', 5, 3);
 
 INSERT INTO attachments (ticket_id, uploaded_by, original_filename, stored_filename, file_path, file_size_bytes, mime_type) VALUES
